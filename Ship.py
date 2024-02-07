@@ -5,19 +5,21 @@ class Ship:
         self.direction = direction
         self.life = life
 
-    def dots(self): #возвращает список всех точек корабля.
+    def dots(self):  # возвращает список всех точек корабля.
         list = []
 
         for i in range(self.length_):
-            if self.direction == "x+":
-               list.append(self.start[0]+i)
-            elif self.direction == "x-":
-                list.append(self.start[0]-i)
-            elif self.direction == "y+":
-                list.append(self.start[1] + i)
+            if self.direction == "y+":
+                list.append([self.start[0] + i-1, self.start[1]-1])
             elif self.direction == "y-":
-                list.append(self.start[1] - i)
+                list.append([self.start[0] - i-1, self.start[1]-1])
+            elif self.direction == "x+":
+                list.append([self.start[1] + i-1, self.start[0]-1])
+            elif self.direction == "x-":
+                list.append([self.start[1] - i-1, self.start[0]-1])
 
         return list
-# a = Ship(3,[1.2],"x+",3)
+
+
+# a = Ship(3, [1, 2], "x+", 3)
 # print(a.dots())
