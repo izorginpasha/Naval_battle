@@ -19,5 +19,5 @@ class Ship:
                 list.append(self.start[1] - i)
 
         return list
-a = Ship(3,[1.2],"x+",3)
-print(a.dots())
+# a = Ship(3,[1.2],"x+",3)
+# print(a.dots())
