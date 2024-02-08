@@ -22,10 +22,10 @@ class Ship:
                 elif self.direction == "y-":
                     list.append(self.dot(self.start[1] - i - 1, self.start[0] - 1))
 
-
             return list
         except:
             return False
+
     def dot(self, point_x, point_y):
         try:
             if (point_x >= 0 and point_y >= 0):
