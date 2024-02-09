@@ -1,5 +1,5 @@
 from Ship import Ship
-from  Dot import Dot
+from Dot import Dot
 
 
 class Board:
@@ -16,6 +16,7 @@ class Board:
         try:  # u'\u2588'
             ship = Ship(ship_len, ship_start, ship_direction, ship_len)
             for i in ship.dots():
+                print(i)
                 if (self.out(i) == False):
                     self.status[i.x][i.y] = u'\u2588'
             self.contour(ship.dots())
@@ -43,7 +44,7 @@ class Board:
         return ""
 
     def out(self, dot):  # для точки (объекта класса Dot)
-        if dot.x >= 0 or dot.y >= 0:
+        if dot.x >= 0 and dot.y >= 0 and dot.x < 6 and dot.y < 6:
             return False
         else:
             return True
@@ -52,28 +53,32 @@ class Board:
     def status(self, value):
         self._status = value
 
-    def shot(self, dot):  # выстрел по доске
+    def shot(self, dot):  # выстрел по доске add +1
+        x = dot.x - 1
+        y = dot.y - 1
+
         if (self.out(dot) == False):
-            print(dot.x, dot.y)
-            if self.status[dot.x][dot.y] == u'\u2588':
-                self.status[dot.x][dot.y] = "X"
-            elif self.status[dot.x][dot.y] == "T":
+            print(x, y)
+            if self.status[x][y] == u'\u2588':
+                self.status[x][y] = "X"
+                return True
+            elif self.status[x][y] == "T":
                 return False
-            elif self.status[dot.x][dot.y] == 0:
-                self.status[dot.x][dot.y] = "T"
+            elif self.status[x][y] == 0 or self.status[x][y] == "*":
+                self.status[x][y] = "T"
+                return False
+
         else:
             return False
 
 
-
-
 #
 #
 #
 
 
-a = Board()
-a.add_ship(3, [1, 2], "x+")
-a.next_map()
-a.shot(Dot(1,2))
-a.next_map()
+# a = Board()
+# a.add_ship(2, [2, 2], "x+")
+# a.next_map()
+# a.shot(Dot(1, 1))
+# a.next_map()
