@@ -16,13 +16,13 @@ class Ship:
                 y = self.start[1]
 
                 if self.direction == "x+":
-                    list.append(self.dot(x + i - 1, y-1))
+                    list.append(self.dot(x + i-1, y - 1))
                 elif self.direction == "x-":
-                    list.append(self.dot(x - i + 1, y-1))
+                    list.append(self.dot(x + i - 1, y - 1))
                 elif self.direction == "y+":
-                    list.append(self.dot(x-1, y + i - 1))
+                    list.append(self.dot(x - 1, y + i - 1))
                 elif self.direction == "y-":
-                    list.append(self.dot(x-1, y - i + 1))
+                    list.append(self.dot(x - 1, y + i - 1))
 
             return list
         except:
@@ -38,6 +38,6 @@ class Ship:
             print("ошибка точки")
 
 
-# a = Ship(3, [1, 1], "x+", 3)
+# a = Ship(3, [2, 3], "x-", 3)
 # b = a.dots()
-# print(b)
+# print(a.dots()[0].x, a.dots()[0].y)
