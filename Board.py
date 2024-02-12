@@ -19,7 +19,7 @@ class Board:
             print(ship.dots())
             if (self.out_ship(ship.dots()) != False):
                 for i in ship.dots():
-                    self.status[i.x][i.y] = u'\u2588'
+                    self.status[i.x][i.y] = "■"
                 self.contour(ship.dots())
             else:
                 return False
@@ -39,7 +39,7 @@ class Board:
 
     def out_ship(self, ship_List):
         for i in ship_List:
-            if (True == self.out(i) or self.status[i.x][i.y] == u'\u2588' or self.status[i.x][i.y] == "*"):
+            if (True == self.out(i) or self.status[i.x][i.y] == "■" or self.status[i.x][i.y] == "*"):
                 ship_List = []
                 print("Ошибка постановки корабля")
                 return False
@@ -48,7 +48,7 @@ class Board:
         for i in ship_list:
             for x in range(i.x - 1, i.x + 2):
                 for y in range(i.y - 1, i.y + 2):
-                    if (self.status[x][y] != u'\u2588' and x >= 0 and y >= 0):
+                    if (self.status[x][y] != "■" and x >= 0 and y >= 0):
                         self.status[x][y] = "*"
 
     def __str__(self):  # выводит доску в консоль в зависимости от параметра hid
@@ -78,7 +78,7 @@ class Board:
 
         if (self.out(dot) == False):
             print(x, y)
-            if self.status[x][y] == u'\u2588':
+            if self.status[x][y] == "■":
                 self.status[x][y] = "X"
                 return True
             elif self.status[x][y] == "T":
