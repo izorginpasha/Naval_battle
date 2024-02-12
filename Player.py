@@ -1,15 +1,20 @@
 from Board import Board
+from Exception import BoardException
 
 
 class Player:
-    def __init__(self, board_player, board_opponent):
-        self.board_player = board_player
-        self.board_opponent = board_opponent
+    def __init__(self, board, enemy):
+        self.board = board
+        self.enemy = enemy
 
-    def ask(self):  # который «спрашивает» игрока, в какую клетку он делает выстрел
-        return
+    def ask(self):
+        raise NotImplementedError()
 
-    def move(self):  # метод, который делает ход в игре
+    def move(self):
         while True:
-            self.board_opponent.shot(self.ask())
-            print(self.board_player)
+            try:
+                target = self.ask()
+                repeat = self.enemy.shot(target)
+                return repeat
+            except BoardException as e:
+                print(e)

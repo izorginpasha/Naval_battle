@@ -5,10 +5,7 @@ from Player import Player
 
 
 class AI(Player):
-
-    def ask(self):  # выбор случайной точки
+    def ask(self):
         d = Dot(randint(0, 5), randint(0, 5))
-        print("Ход компьютера: {d.x + 1} {d.y + 1}")
+        print(f"Ход компьютера: {d.x + 1} {d.y + 1}")
         return d
-# a = AI()
-# a.move()

@@ -3,13 +3,20 @@ from Dot import Dot
 
 
 class User(Player):
+    def ask(self):
+        while True:
+            cords = input( "Ваш ход: ").split()
 
-    def ask(self):  # спрашивать координаты точки из консоли
-        c = input("Ваш ход: ").split()
-        x, y = c
-        x, y = int(x), int(y)
-        return Dot(x, y)
+            if len(cords) != 2:
+                print("Введите 2 координаты! " )
+                continue
 
+            x, y = cords
 
-# a = User()
-# a.move()
+            if not (x.isdigit()) or not (y.isdigit()):
+                print("Введите числа! ")
+                continue
+
+            x, y = int(x), int(y)
+
+            return Dot(x - 1, y - 1)

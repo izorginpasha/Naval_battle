@@ -1,132 +1,89 @@
-from random import randint
 
-from Ship import Ship
+
+
+
+from Exception import BoardWrongShipException, BoardOutException, BoardUsedException
 from Dot import Dot
 
 
 class Board:
-    _status = [[0] * 6 for i in range(6)]
-    ship_maps = []
-    hid: bool = True
-    count_shift = int
+    def __init__(self, hide=False, size=6):
+        self.size = size
+        self.hide = hide
 
-    @property
-    def status(self):
-        return self._status
+        self.count = 0
 
-    def add_ship(self, ship):  # ставит корабль на доску
-        try:  # u'\u2588'
-            print(ship.dots())
-            if (self.out_ship(ship.dots()) != False):
-                for i in ship.dots():
-                    self.status[i.x][i.y] = u'\u2588'
-                self.contour(ship.dots())
-            else:
-                return False
+        self.field = [["0"] * size for _ in range(size)]
 
-            # for i in ship.dots():
-            #     if (True == self.out(i) or self.status[i.x][i.y] == u'\u2588' or self.status[i.x][i.y] == "*"):
-            #         ship = []
-            #         print("Ошибка постановки корабля")
-            #         return False
+        self.busy = []
+        self.ships = []
 
+    def __str__(self):
+        res = ""
+        res += "   | 1 | 2 | 3 | 4 | 5 | 6 |"
+        for i, row in enumerate(self.field):
+            res += f"\n{i + 1}  | " + " | ".join(row) + " |"
 
+        if self.hide:
+            res = res.replace("■", "0")
+        return res
 
-        except:
-            print("Ошибка постановки корабля")
-            return False
-            # self.status = [[0] * 6 for i in range(6)]
+    def out(self, d):
+        return not ((0 <= d.x < self.size) and (0 <= d.y < self.size))
 
-    def out_ship(self, ship_List):
-        for i in ship_List:
-            if (True == self.out(i) or self.status[i.x][i.y] == u'\u2588' or self.status[i.x][i.y] == "*"):
-                ship_List = []
-                print("Ошибка постановки корабля")
-                return False
+    def contour(self, ship, verb=False):
+        near = [
+            (-1, -1), (-1, 0), (-1, 1),
+            (0, -1), (0, 0), (0, 1),
+            (1, -1), (1, 0), (1, 1)
+        ]
+        for d in ship.dots:
+            for dx, dy in near:
+                cur = Dot(d.x + dx, d.y + dy)
+                if not (self.out(cur)) and cur not in self.busy:
+                    if verb:
+                        self.field[cur.x][cur.y] = "."
+                    self.busy.append(cur)
 
-    def contour(self, ship_list):  # обводит корабль по контуру
-        for i in ship_list:
-            for x in range(i.x - 1, i.x + 2):
-                for y in range(i.y - 1, i.y + 2):
-                    if (self.status[x][y] != u'\u2588' and x >= 0 and y >= 0):
-                        self.status[x][y] = "*"
+    def add_ship(self, ship):
+        for d in ship.dots:
+            if self.out(d) or d in self.busy:
+                raise BoardWrongShipException()
+        for d in ship.dots:
+            self.field[d.x][d.y] = "■"
+            self.busy.append(d)
 
-    def __str__(self):  # выводит доску в консоль в зависимости от параметра hid
-        if True == self.hid:
-            for i in range(len(self.status)):
-                if i == 0: print("  1 2 3 4 5 6")
-                for j in range(len(self.status)):
-                    if j == 0: print(i + 1, end=' ')
-                    print(self.status[i][j], end=' ')
-                print()
+        self.ships.append(ship)
+        self.contour(ship)
 
-        return ""
+    def shot(self, d):
+        if self.out(d):
+            raise BoardOutException()
 
-    def out(self, dot):  # для точки (объекта класса Dot)
-        if dot.x >= 0 and dot.y >= 0 and dot.x < 6 and dot.y < 6:
-            return False
-        else:
-            return True
+        if d in self.busy:
+            raise BoardUsedException()
 
-    @status.setter
-    def status(self, value):
-        self._status = value
+        self.busy.append(d)
 
-    def shot(self, dot):  # выстрел по доске add +1
-        x = dot.x - 1
-        y = dot.y - 1
+        for ship in self.ships:
+            if ship.shooten(d):
+                ship.lives -= 1
+                self.field[d.x][d.y] = "X"
+                if ship.lives == 0:
+                    self.count += 1
+                    self.contour(ship, verb=True)
+                    print("Корабль уничтожен!" )
+                    return False
+                else:
+                    print("Корабль повреждён!")
+                    return True
 
-        if (self.out(dot) == False):
-            print(x, y)
-            if self.status[x][y] == u'\u2588':
-                self.status[x][y] = "X"
-                return True
-            elif self.status[x][y] == "T":
-                return False
-            elif self.status[x][y] == 0 or self.status[x][y] == "*":
-                self.status[x][y] = "T"
-                return False
+        self.field[d.x][d.y] = "✸"
+        print("Промах!")
+        return False
 
-        else:
-            return False
+    def begin(self):
+        self.busy = []
 
-
-#
-#
-#
-
-# lens = [3, 2]
-# n = ["x+", "y+", "x-", "y-"]
-# board = Board()
-# count = 0
-# for l in lens:
-#     x = 1
-#     while x == 1:
-#         print(l)
-#         count += 1
-#         if count > 1000:
-#             print(count)
-#             break
-#         try:
-#             ship = board.add_ship(Ship(l, [randint(0, 5), randint(0, 5)], n[randint(0, 3)], l))
-#             print(ship)
-#             print("ship ", l, ship)
-#             if ship == None:
-#                 break
-#         except:
-#             break
-#
-#
-#
-#
-# print(board)
-# a = Board()
-# a.add_ship(Ship(2, [4, 2], "x+",1))
-# a.add_ship(Ship(2, [1, 4], "x+",1))
-# a.add_ship(Ship(2, [4, 2], "y+",1))
-# a.add_ship(Ship(2, [4, 2], "x+",1))
-# a.add_ship(Ship(2, [1, 1], "x-",1))
-# a.add_ship(Ship(2, [4, 2], "x+",1))
-# print(a)
-# a.shot(Dot(1, 1))
-# a.next_map()
+    def defeat(self):
+        return self.count == len(self.ships)

@@ -2,42 +2,29 @@ from Dot import Dot
 
 
 class Ship:
-    def __init__(self, length_, start, direction, life):
-        self.length_ = length_
-        self.start = start
-        self.direction = direction
-        self.life = life
+    def __init__(self, bow, l, o):
+        self.bow = bow
+        self.l = l
+        self.o = o
+        self.lives = l
 
-    def dots(self):  # возвращает список всех точек корабля.
-        list = []
-        try:
-            for i in range(self.length_):
-                x = self.start[0]
-                y = self.start[1]
+    @property
+    def dots(self):
+        ship_dots = []
+        for i in range(self.l):
+            cur_x = self.bow.x
+            cur_y = self.bow.y
 
-                if self.direction == "x+":
-                    list.append(self.dot(x + i-1, y - 1))
-                elif self.direction == "x-":
-                    list.append(self.dot(x + i - 1, y - 1))
-                elif self.direction == "y+":
-                    list.append(self.dot(x - 1, y + i - 1))
-                elif self.direction == "y-":
-                    list.append(self.dot(x - 1, y + i - 1))
+            if self.o == 0:
+                cur_x += i
 
-            return list
-        except:
-            return False
+            elif self.o == 1:
+                cur_y += i
 
-    def dot(self, point_x, point_y):
-        try:
-            if (point_x >= 0 and point_y >= 0):
-                return Dot(point_x, point_y)
-            else:
-                return exit()
-        except:
-            print("ошибка точки")
+            ship_dots.append(Dot(cur_x, cur_y))
 
+        return ship_dots
 
-# a = Ship(3, [2, 3], "x-", 3)
-# b = a.dots()
-# print(a.dots()[0].x, a.dots()[0].y)
+    def shooten(self, shot):
+        return shot in self.dots
+

@@ -1,71 +1,92 @@
 from random import randint
 
-from User import User
 from AI import AI
 from Board import Board
-from Ship import Ship
 from Dot import Dot
+from Exception import BoardWrongShipException
+from Ship import Ship
+from User import User
 
 
 class Game:
-    # def __init__(self):
-    #     u = self.random_board()
-    #     ai = self.random_board()
-    #     self.user = User(u, ai)
-    #
-    #     self.ai = AI(ai, u)
+    def __init__(self, size=6):
+        self.size = size
+        pl = self.random_board()
+        co = self.random_board()
+        co.hide = True
 
-    def nev_board(self):
-        lens = [3, 2, 2, 1, 1, 1]
-        n = ["x+", "y+", "x-", "y-"]
-        board = Board()
-        count = 0
+        self.ai = AI(co, pl)
+        self.us = User(pl, co)
+
+    def try_board(self):
+        lens = [3, 2, 2, 1, 1, 1, 1]
+        board = Board(size=self.size)
+        attempts = 0
         for l in lens:
             while True:
-                print(l)
-                count += 1
-                if count > 1000:
-                    print(count)
+                attempts += 1
+                if attempts > 2000:
                     return None
-                ship = Ship(l, [randint(0, 5), randint(0, 5)], n[randint(0, 3)], l)
-                print("ship ", l, ship)
-                a = board.add_ship(ship)
-                print("yes", a)
-                print(board)
-                if a!= False:
+                ship = Ship(Dot(randint(0, self.size), randint(0, self.size)), l, randint(0, 1))
+                try:
+                    board.add_ship(ship)
                     break
-                if not a:
+                except BoardWrongShipException:
                     pass
-
-
+        board.begin()
         return board
 
-    def random_board(self):  # метод генерирует случайную доску.
+    def random_board(self):
         board = None
         while board is None:
-            board = self.nev_board()
-            print("board")
+            board = self.try_board()
         return board
 
-    def greet(self):  # метод, который в консоли приветствует пользователя
-        print("   Игра морскои бой ")
-        print("                   ")
-        print("   формат ввода: x y ")
-        print("   x - номер строки  ")
-        print("   y - номер столбца ")
+    def greet(self):
+        print(" Игра морскои бой")
+        print("                  ")
+        print("формат ввода: x y")
+        print("x - номер строки")
+        print("y - номер столбца")
 
-    def loop(self):  # метод с самим игровым циклом
-        print(self.user.board_player)
+    def print_boards(self):
+        print("Доска игрока:")
+        print(self.us.board)
+        print("Доска компьютера:")
+        print(self.ai.board)
 
-    # print(self.user.board_opponent)
+    def loop(self):
+        num = 0
+        while True:
+            self.print_boards()
+            print("Доска игрока:")
+            print(self.us.board)
+            print("Доска компьютера:")
+            print(self.ai.board)
+            if num % 2 == 0:
+                print("Ход игрока")
+                repeat = self.us.move()
+            else:
+                print(" Ход компьютерф")
+                repeat = self.ai.move()
+            if repeat:
+                num -= 1
+
+            if self.ai.board.defeat():
+                self.print_boards()
+                print("Игрок выиграл")
+                break
+
+            if self.us.board.defeat():
+                self.print_boards()
+                print("Компьютер выиграл")
+                break
+            num += 1
 
     def start(self):
-        # запуск игры
         self.greet()
         self.loop()
 
 
-a = Game()
-print(a.random_board())
-
-# a.user.board_player.next_map()
+g = Game()
+g.start()
